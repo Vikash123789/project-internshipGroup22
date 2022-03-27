@@ -58,7 +58,7 @@ const InternCreate = async function (req, res) {
       return res.status(201).send({
         status: true,
         data: savedData,
-        msg: "Intern data Saved Succefully",
+        msg: "Intern data Saved Successfully",
       });
     } else {
       return res
