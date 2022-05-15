@@ -1,5 +1,5 @@
-const InternModel = require("../models/internModel");
-const CollegeModel = require("../models/CollegeModel");
+const InternModel = require("../Models/InternModel");
+const CollegeModel = require("../Models/CollegeModel");
 
 const isValid = function (value) {
   if (typeof value == undefined || value == null) return false;
@@ -17,30 +17,34 @@ const InternCreate = async function (req, res) {
           .status(400)
           .send({ status: false, msg: "Name is Mandatory" });
       }
-      if (!isValid(data.collegeId)) {
-        return res
-          .status(400)
-          .send({ status: false, msg: "College Id is Mandatory" });
-      }
+      // if (!isValid(data.collegeId)) {
+      //   return res
+      //     .status(400)
+      //     .send({ status: false, msg: "College Id is Mandatory" });
+      // }
 
       if (!/^\w+([\.-]?\w+)@\w+([\. -]?\w+)(\.\w{2,3})+$/.test(data.email)) {
         return res
           .status(400)
           .send({ status: false, msg: "Please Enter a Valid Email" });
-      }
+        }
+        let AlreadyExistData = await InternModel.findOne({ email: data.email });
+        
+              if (AlreadyExistData) {
+                return res
+                  .status(400)
+                  .send({ status: false, msg: "Email already exists" });
+              }
+
       if (!/^([+]\d{2})?\d{10}$/.test(data.mobile)) {
         return res
           .status(400)
           .send({ status: false, msg: "Please Enter  a Valid Mobile Number" });
       }
-
-      let AlreadyExistData = await InternModel.findOne({ email: data.email });
-
-      if (AlreadyExistData) {
-        return res
-          .status(400)
-          .send({ status: false, msg: "Email already exists" });
-      }
+let mobileAlready = await InternModel.findOne({mobile : data.mobile})
+if(mobileAlready){
+  return res.status(400).send({status : false , msg : "Mobile Number is Already Register"})
+}
 
       const collegeByName = await CollegeModel.findOne({
         name: data.collegeName,
@@ -52,6 +56,7 @@ const InternCreate = async function (req, res) {
           .send({ status: false, message: "No college found by this Name" });
       }
       const collegeId = collegeByName._id;
+      const Body = data
       Body.collegeId = collegeId;
       delete Body.collegeName;
       const savedData = await InternModel.create(Body);

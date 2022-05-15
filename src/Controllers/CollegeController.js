@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 const collegeModel = require("../Models/CollegeModel")
-const InternModel = require("../models/internModel")
+const InternModel = require("../Models/InternModel")
 
 
 
@@ -53,17 +53,19 @@ const collegeDetails = async function (req, res) {
          return res.status(400).send({ status: false, err: "Please Provide anabbreviated college name. For example iith, By Query" })
       }
       let lowerCase = collegeName.toLowerCase()
-      let filterCollege = await collegeModel.findOne({ name: lowerCase })
+      let filterCollege = await collegeModel.findOne({ name: lowerCase})
+      console.log(filterCollege)
       if (!filterCollege) {
          return res.status(404).send({ status: false, err: "College Data Not Found" })
       }
 
       let InternsEntry = await InternModel.find({ collegeId: filterCollege._id })
+      console.log(InternsEntry)
       let result = { name: filterCollege.name, fullName: filterCollege.fullName, logoLink: filterCollege.logoLink }
       if (InternsEntry.length > 0) {
          result["Interests"] = InternsEntry
 
-         return res.status(200).send({data:result,  })
+         return res.status(200).send({data:result })
       }
 
       if (InternsEntry.length == 0) {
