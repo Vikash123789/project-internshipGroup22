@@ -27,27 +27,27 @@ const InternCreate = async function (req, res) {
         return res
           .status(400)
           .send({ status: false, msg: "Please Enter a Valid Email" });
-        }
-        let AlreadyExistData = await InternModel.findOne({ email: data.email });
-        
-              if (AlreadyExistData) {
-                return res
-                  .status(400)
-                  .send({ status: false, msg: "Email already exists" });
-              }
+      }
+      let AlreadyExistData = await InternModel.findOne({ email: data.email });
 
-      if (!/^([+]\d{2})?\d{10}$/.test(data.mobile)) {
+      if (AlreadyExistData) {
+        return res
+          .status(400)
+          .send({ status: false, msg: "Email already exists" });
+      }
+
+      if (!/^[6-9]\d{9}$/.test(data.mobile)) {
         return res
           .status(400)
           .send({ status: false, msg: "Please Enter  a Valid Mobile Number" });
       }
-let mobileAlready = await InternModel.findOne({mobile : data.mobile})
-if(mobileAlready){
-  return res.status(400).send({status : false , msg : "Mobile Number is Already Register"})
-}
+      let mobileAlready = await InternModel.findOne({ mobile: data.mobile })
+      if (mobileAlready) {
+        return res.status(400).send({ status: false, msg: "Mobile Number is Already Register" })
+      }
 
       const collegeByName = await CollegeModel.findOne({
-        name: data.collegeName,
+        name: data.collegeName, isDeleted : false
       });
 
       if (!collegeByName) {
@@ -56,10 +56,9 @@ if(mobileAlready){
           .send({ status: false, message: "No college found by this Name" });
       }
       const collegeId = collegeByName._id;
-      const Body = data
-      Body.collegeId = collegeId;
-      delete Body.collegeName;
-      const savedData = await InternModel.create(Body);
+      data.collegeId = collegeId;
+      delete data.collegeName;
+      const savedData = await InternModel.create(data);
       return res.status(201).send({
         status: true,
         data: savedData,

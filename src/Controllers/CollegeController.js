@@ -12,12 +12,6 @@ const isValid = function (value) {
 
 
 
-
-
-
-
-
-
 const createCollege = async function (req, res) {
    try {
       const data = req.body
@@ -25,6 +19,12 @@ const createCollege = async function (req, res) {
          if (!isValid(data.name)) {
             return res.status(400).send({ status: false, msg: "Name is Mandatory" })
          }
+         let alreadyName = await collegeModel.findOne({name : data.name})
+         if(alreadyName){
+            return res.status(400).send({ status: false, msg: "Name Already Exist" })
+         }
+         
+
          if (!isValid(data.fullName)) {
             return res.status(400).send({ status: false, msg: "Full name is Mandatory" })
          }
@@ -34,9 +34,9 @@ const createCollege = async function (req, res) {
 
             return res.status(201).send({ status: true, msg: "College detail Saved Successfully", data: savedData })
 
-         } else { res.status(401).send({ msg: "Please Enter A Valid Url" }) }
+         } else { res.status(400).send({ msg: "Please Enter A Valid Url" }) }
 
-      } else { res.status(401).send({ Message: "Enter Some Mandatory Detail" }) }
+      } else { res.status(400).send({ Message: "Enter Some Mandatory Detail" }) }
 
    } catch (error) {
       return res.status(500).send({ error: error.message })
@@ -53,7 +53,7 @@ const collegeDetails = async function (req, res) {
          return res.status(400).send({ status: false, err: "Please Provide anabbreviated college name. For example iith, By Query" })
       }
       let lowerCase = collegeName.toLowerCase()
-      let filterCollege = await collegeModel.findOne({ name: lowerCase})
+      let filterCollege = await collegeModel.findOne({ name: lowerCase,isDeleted : false})
       console.log(filterCollege)
       if (!filterCollege) {
          return res.status(404).send({ status: false, err: "College Data Not Found" })

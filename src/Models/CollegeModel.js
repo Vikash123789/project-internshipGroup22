@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Url = require('mongoose-type-url');
 
 // { name: { mandatory, unique, example iith}, fullName: {mandatory, example `Indian Institute of Technology, Hyderabad`}, logoLink: {mandatory}, isDeleted: {boolean, default: false} }
 

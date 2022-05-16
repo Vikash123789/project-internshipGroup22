@@ -26,13 +26,13 @@ const internSchema = new mongoose.Schema({
     collegeId: {
         type: ObjectId,
         ref: "collegeModel",
-
+    },
         isDeleted: {
             type: Boolean,
             default: false
         }
 
-    }
+    
 }, { timeStamps: true })
 
 module.exports = mongoose.model('internModels', internSchema)
